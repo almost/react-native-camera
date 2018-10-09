@@ -414,23 +414,4 @@ export default class Camera extends React.Component<PropsType, StateType> {
 
 export const Constants = Camera.Constants;
 
-const RNCamera = requireNativeComponent('RNCamera', Camera, {
-  nativeOnly: {
-    accessibilityComponentType: true,
-    accessibilityLabel: true,
-    accessibilityLiveRegion: true,
-    barCodeScannerEnabled: true,
-    googleVisionBarcodeDetectorEnabled: true,
-    faceDetectorEnabled: true,
-    textRecognizerEnabled: true,
-    importantForAccessibility: true,
-    onBarCodeRead: true,
-    onGoogleVisionBarcodesDetected: true,
-    onCameraReady: true,
-    onFaceDetected: true,
-    onLayout: true,
-    onMountError: true,
-    renderToHardwareTextureAndroid: true,
-    testID: true,
-  },
-});
+const RNCamera = requireNativeComponent('RNCamera');
