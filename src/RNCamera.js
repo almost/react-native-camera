@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from "react";
 import PropTypes from 'prop-types';
 import { mapValues } from 'lodash';
 import {
@@ -14,6 +14,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
+type ViewProps = React.ElementProps<typeof View>;
 import type { FaceFeature } from './FaceDetector';
 
 import { requestPermissions } from './handlePermissions';
@@ -75,7 +76,9 @@ type EventCallbackArgumentsType = {
   nativeEvent: Object,
 };
 
-type PropsType = typeof View.props & {
+type Status = 'READY' | 'PENDING_AUTHORIZATION' | 'NOT_AUTHORIZED';
+
+type PropsType = ViewProps & {
   zoom?: number,
   ratio?: string,
   focusDepth?: number,
@@ -93,9 +96,15 @@ type PropsType = typeof View.props & {
   faceDetectionClassifications?: number,
   onFacesDetected?: ({ faces: Array<TrackedFaceFeature> }) => void,
   onTextRecognized?: ({ textBlocks: Array<TrackedTextFeature> }) => void,
+  onMountError?: (error:*) => void,
   captureAudio?: boolean,
   useCamera2Api?: boolean,
   playSoundOnCapture?: boolean,
+  notAuthorizedView?: ?React.Node,
+  pendingAuthorizationView?:  ?React.Node,
+  permissionDialogMessage?: string,
+  permissionDialogTitle?: string,
+  children: ({camera: Camera, status: Status}) => ?React.Node
 };
 
 type StateType = {
@@ -103,7 +112,6 @@ type StateType = {
   isAuthorizationChecked: boolean,
 };
 
-type Status = 'READY' | 'PENDING_AUTHORIZATION' | 'NOT_AUTHORIZED';
 
 const CameraStatus = {
   READY: 'READY',
@@ -168,34 +176,6 @@ export default class Camera extends React.Component<PropsType, StateType> {
     googleVisionBarcodeType: (CameraManager.GoogleVisionBarcodeDetection || {}).BarcodeType,
   };
 
-  static propTypes = {
-    ...ViewPropTypes,
-    zoom: PropTypes.number,
-    ratio: PropTypes.string,
-    focusDepth: PropTypes.number,
-    onMountError: PropTypes.func,
-    onCameraReady: PropTypes.func,
-    onBarCodeRead: PropTypes.func,
-    onGoogleVisionBarcodesDetected: PropTypes.func,
-    onFacesDetected: PropTypes.func,
-    onTextRecognized: PropTypes.func,
-    faceDetectionMode: PropTypes.number,
-    faceDetectionLandmarks: PropTypes.number,
-    faceDetectionClassifications: PropTypes.number,
-    barCodeTypes: PropTypes.arrayOf(PropTypes.string),
-    googleVisionBarcodeType: PropTypes.number,
-    type: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    flashMode: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    whiteBalance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    autoFocus: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool]),
-    permissionDialogTitle: PropTypes.string,
-    permissionDialogMessage: PropTypes.string,
-    notAuthorizedView: PropTypes.element,
-    pendingAuthorizationView: PropTypes.element,
-    captureAudio: PropTypes.bool,
-    useCamera2Api: PropTypes.bool,
-    playSoundOnCapture: PropTypes.bool,
-  };
 
   static defaultProps: Object = {
     zoom: 0,
